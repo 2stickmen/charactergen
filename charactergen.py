@@ -5,7 +5,7 @@ races = read_csv('https://raw.githubusercontent.com/2stickmen/charactergen/maste
 classes = read_csv('https://raw.githubusercontent.com/2stickmen/charactergen/master/Classes.csv')
 subs = read_csv('https://raw.githubusercontent.com/2stickmen/charactergen/master/Subs.csv')
 items = read_csv('https://raw.githubusercontent.com/2stickmen/charactergen/master/MagicItems.csv')
-vowels = ['A','E','I','O','U']
+gender = ['Male', 'Female', 'Non-Binary']
 
 def getItem(n,r):
     item = []
@@ -47,24 +47,14 @@ def makeCharacter(*args): # Input a list: [Amount of common items, Amount of unc
     clas = getClass()
     sub = getSub(clas)
     stats = str(statGen())
+    gend = randint(0,2)
     if len(args) == 0:
-        if race[0] in vowels:
-            print("You are an " + race + " " + sub + " " + clas 
-                     + ". Your stats are: " + stats
-                     + ". Happy Adventuring!")
-        else:
-            print("You are a " + race + " " + sub + " " + clas
+            print("You are a " + gender[gend] + " " + race + " " + sub + " " + clas
                      + ". Your stats are: " + str(stats)
                      + ". Happy Adventuring!")
     else:
         inv = str(getInv(*args))
-        if race[0] in vowels:
-            print("You are an " + race + " " + sub + " " + clas
-                     +". Your stats are " + stats
-                     + ". You have the following magic items: " + inv
-                     + ". Happy Adventuring!")
-        else:
-            print("You are a "  + race + " " + sub + " " + clas
+        print("You are a " + gender[gend] + " " + race + " " + sub + " " + clas
                      +". Your stats are " + stats
                      + ". You have the following magic items: " + inv
                      + ". Happy Adventuring!")
@@ -72,5 +62,6 @@ def makeCharacter(*args): # Input a list: [Amount of common items, Amount of unc
 
 def makeParty(n,*args):
     for i in range(n):
+        print("Character " + str(i+1) + " is ")
         makeCharacter(*args)
     
