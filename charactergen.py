@@ -1,11 +1,17 @@
 from random import *
 from pandas import *
 
+
 races = read_csv('https://raw.githubusercontent.com/2stickmen/charactergen/master/Races.csv')
 classes = read_csv('https://raw.githubusercontent.com/2stickmen/charactergen/master/Classes.csv')
 subs = read_csv('https://raw.githubusercontent.com/2stickmen/charactergen/master/Subs.csv')
 items = read_csv('https://raw.githubusercontent.com/2stickmen/charactergen/master/MagicItems.csv')
+backgrounds = read_csv('https://raw.githubusercontent.com/2stickmen/charactergen/master/Backgrounds.csv')
+vowels = ['A','E','I','O','U']
 gender = ['Male', 'Female', 'Non-Binary']
+alignments = ['Lawful Good', 'Neutral Good', 'Chaotic Good',
+              'Lawful Neutral', 'True Neutral', 'Chaotic Neutral',
+              'Lawful Evil', 'Neutral Evil', 'Chaotic Evil']
 
 def getItem(n,r):
     item = []
@@ -42,22 +48,24 @@ def getSub(n):
         sub = subs.loc[randint(0,17),n]
     return sub
 
+def getBG():
+    bg = backgrounds.iloc[randint(0,23),0]
+    return bg
+
 def makeCharacter(*args): # Input a list: [Amount of common items, Amount of uncommon items...]
     race = getRace()
     clas = getClass()
     sub = getSub(clas)
     stats = str(statGen())
-    gend = randint(0,2)
+    gend = choice(gender)
+    alignment = choice(alignments)
+    bg = getBG()
+    
     if len(args) == 0:
-            print("You are a " + gender[gend] + " " + race + " " + sub + " " + clas
-                     + ". Your stats are: " + str(stats)
-                     + ". Happy Adventuring!")
+            print("You are a {} {} {} {} who is also {}. Your stats are: {}. Your alignment is {}. Happy Adventuring!").format(gend, race, sub, clas, bg, stats, alignment)
     else:
         inv = str(getInv(*args))
-        print("You are a " + gender[gend] + " " + race + " " + sub + " " + clas
-                     +". Your stats are " + stats
-                     + ". You have the following magic items: " + inv
-                     + ". Happy Adventuring!")
+        print("You are a {} {} {} {} who is  also {}. Your stats are: {}. Your alignment is {}. You have the following magic items {}. Happy Adventuring!").format(gend, race, sub, clas, bg , stats, alignment ,inv)
     
 
 def makeParty(n,*args):
