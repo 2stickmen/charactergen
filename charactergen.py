@@ -35,11 +35,11 @@ def statGen():
     return stats        
 
 def getRace():
-    race = races.iloc[randint(0,81),0]
+    race = races.iloc[randint(0,races.size -1),0]
     return race
 
 def getClass():
-    clas = classes.iloc[randint(0,12),0]
+    clas = classes.iloc[randint(0,classes.size -1,),0]
     return clas
 
 def getSub(n):
