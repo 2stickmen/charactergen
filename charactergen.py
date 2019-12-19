@@ -16,7 +16,10 @@ alignments = ['Lawful Good', 'Neutral Good', 'Chaotic Good',
 def getItem(n,r):
     item = []
     for i in range(n):
-        item.append(items.iloc[randint(0,136),r])
+        gen = randint(0,items.shape[0]-1)
+        while type(items.iloc[gen,r]) == float:
+            gen = randint(0,items.shape[0]-1)
+        item.append(items.iloc[gen,r])
     return item
 
 def getInv(curvl):
@@ -35,21 +38,21 @@ def statGen():
     return stats        
 
 def getRace():
-    race = races.iloc[randint(0,races.size -1),0]
+    race = races.iloc[randint(0,races.shape[0]-1),0]
     return race
 
 def getClass():
-    clas = classes.iloc[randint(0,classes.size -1,),0]
+    clas = classes.iloc[randint(0,classes.shape[0]-1,),0]
     return clas
 
 def getSub(n):
-    sub = subs.loc[randint(0,17),n]
+    sub = subs.loc[randint(0,subs.shape[0]-1),n]
     while type(sub) == float:
-        sub = subs.loc[randint(0,17),n]
+        sub = subs.loc[randint(0,subs.shape[0]-1),n]
     return sub
 
 def getBG():
-    bg = backgrounds.iloc[randint(0,23),0]
+    bg = backgrounds.iloc[randint(0,backgrounds.shape[0]-1),0]
     return bg
 
 def makeCharacter(*args): # Input a list: [Amount of common items, Amount of uncommon items...]
