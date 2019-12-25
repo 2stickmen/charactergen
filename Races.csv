@@ -1,7 +1,7 @@
 racename,heightmin,dicenumb,diceval,strval,dexval,conval,intval,wisval,chaval,nonspecamount
 Aasimar (Fallen),58,2,10,1,0,0,0,0,2,0
 Aasimar (Protector),58,2,10,0,0,0,0,1,2,0
-Aasimar (Scourge),58,2,10,1,0,1,0,0,2,0
+Aasimar (Scourge),58,2,10,0,0,1,0,0,2,0
 Bugbear,72,2,12,2,1,0,0,0,0,0
 Centaur,72,1,12,2,0,0,0,1,0,0
 Changeling,61,2,4,0,0,0,0,0,2,1
