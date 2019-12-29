@@ -4,12 +4,12 @@ History,Athletic,Animal Handling,Acrobatics,Insight,Animal Handling,Athletics,At
 Investigation,Intimidation,Arcana,Arcana,Medicine,Insight,History,History,Intimidation,Insight,Deception,Insight,History,Insight
 Medicine,Nature,Athletics,Insight,Persuasion,Medicine,Insight,Insight,Medicine,Investigation,Insight,Intimidation,Intimidation,Investigation
 Nature,Perception,Deception,Investigation,Religion,Nature,Intimidation,Religion,Persuasion,Nature,Intimidation,Persuasion,Investigation,Medicine
-Perception,Survival,History,Survival,,Perception,Perception,Stealth,Religion,Perception,Investigation,and Religion.,Nature,and Religion
-Sleight of Hand,,Insight,,,Religion,Survival,,,Stealth,Perception,,and Religion,
-,,Intimidation,,,Survival,,,,and Survival.,Performance,,,
+Perception,Survival,History,Survival,,Perception,Perception,Stealth,Religion,Perception,Investigation,Religion,Nature,and Religion
+Sleight of Hand,,Insight,,,Religion,Survival,,,Stealth,Perception,,Religion,
+,,Intimidation,,,Survival,,,,Survival,Performance,,,
 ,,Investigation,,,,,,,,Persuasion,,,
 ,,Medicine,,,,,,,,Sleight of Hand,,,
-,,Nature,,,,,,,,and Stealth,,,
+,,Nature,,,,,,,,Stealth,,,
 ,,Perception,,,,,,,,,,,
 ,,Performance,,,,,,,,,,,
 ,,Persuasion,,,,,,,,,,,
