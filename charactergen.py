@@ -398,9 +398,6 @@ def makeCharacter(level, *args): # Input a list: [Amount of common items, Amount
 
 char = makeCharacter(15)
 
-def makeParty(n,*args):
-    for i in range(n):
-        print("Character " + str(i+1) + " is " + makeCharacter(*args))
 
 
 Sheet_Path = 'C:/Users/2stic/Desktop/charactergen/Character Sheet.pdf'
@@ -441,3 +438,9 @@ def addPlus(data_dict):
 
 
 write_fillable_pdf(Sheet_Path, OUTPUT_PATH, addPlus(char))
+
+def makeParty(n,level,*args):
+    for i in range(n):
+        chars = makeCharacter(level,*args)
+        write_fillable_pdf(Sheet_Path, 'C:/Users/2stic/Desktop/charactergen/{} {} {}.pdf'.format(chars['Gender'],chars['Race'],chars['ClassLevel']), addPlus(chars))
+
