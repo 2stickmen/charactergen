@@ -264,8 +264,9 @@ def makeCharacter(level, *args): # Input a list: [Amount of common items, Amount
     sub = ''
     if level >= classInfo.iloc[0,2]:
         sub = getSub(clas)
-    ft = getHeight(race)[0]
-    inch = getHeight(race)[1]
+    height = getHeight(race)
+    ft = height[0]
+    inch = height[1]
     preStats = statOptimise(statGen(),clas)
     adjStats = statAdj(race,clas)
     stats = statCheck([m + n for m,n in zip(preStats,adjStats)])
@@ -306,22 +307,96 @@ def makeCharacter(level, *args): # Input a list: [Amount of common items, Amount
     flaw = getFlaws(bg)
     ideal = getIdeals(bg)
     
-    if len(args) == 0:
-            output = [[gend, race, sub, clas, bg, stats, ft, inch, alignment, level, pb, hp,hd], 
-                      [profs, saves, boolProfs, saveProf],
-                      inv,
-                      [pers,ideal,bond,flaw]]
-    else:
+    if len(args) != 0:
         inv = getInv(*args)
-        output = [[gend, race, sub, clas, bg , stats,ft,inch, alignment,level,pb,hp, hd],
-                  [profs,saves,boolProfs,saveProf],
-                  inv,
-                  [pers,ideal,bond,flaw]]
-    return output
+    
+    data_dict = {
+   'Gender': gend,
+   'Race' : race,
+   'ClassLevel' : sub + ' ' + clas + ' ' + str(level),
+   'Background' : bg,
+   'Height' : str(ft) + '′' + str(inch) + '″',
+   'ProfB' : '+ ' + str(pb),
+   'HPMax' : str(hp),
+   'HPCurrent' : str(hp),
+   'STR' : str(stats[0]),
+   'STRmod' : int(statBonus(stats[0])),
+   'DEX' : str(stats[1]),
+   'DEXmod' : int(statBonus(stats[1])),
+   'CON' : str(stats[2]),
+   'CONmod' : int(statBonus(stats[2])),
+   'INT' : str(stats[3]),
+   'INTmod' : int(statBonus(stats[3])),
+   'WIS' : str(stats[4]),
+   'WISmod' : int(statBonus(stats[4])),
+   'CHA' : str(stats[5]),
+   'CHAmod' : int(statBonus(stats[5])),
+   'Alignment' : alignment,
+   'SavingThrows' : int(saves[0]),
+   'SavingThrows2' : int(saves[1]),
+   'SavingThrows3' : int(saves[2]),
+   'SavingThrows4' : int(saves[3]),
+   'SavingThrows5' : int(saves[4]),
+   'SavingThrows6' : int(saves[5]),
+   'Athletics' : int(profs[0][0]),
+   'Acrobatics' : int(profs[1][0]),
+   'SleightofHand' : int(profs[1][1]),
+   'Stealth' : int(profs[1][2]),
+   'Arcana' : int(profs[2][0]),
+   'History' : int(profs[2][1]),
+   'Investigation' : int(profs[2][2]),
+   'Nature' : int(profs[2][3]),
+   'Religion' : int(profs[2][4]),
+   'Animal Handling' : int(profs[3][0]),
+   'Insight' : int(profs[3][1]),
+   'Medicine' : int(profs[3][2]),
+   'Perception' : int(profs[3][3]),
+   'Survival' : int(profs[3][4]),
+   'Deception' : int(profs[4][0]),
+   'Intimidation' : int(profs[4][1]),
+   'Performance' : int(profs[4][2]),
+   'Persuasion' : int(profs[4][3]),
+   'Passive' : str(10 + profs[3][3]),
+   'Equipment' : str(inv)[1:-1],
+   'HD' : 'd' + str(hd),
+   'HDTotal' : str(level) + 'd' + str(hd),
+   'ChBx Acrobatics' : pdfrw.PdfName(boolProfs[1][0]),
+   'ChBx Athletics' : pdfrw.PdfName(boolProfs[0][0]),
+   'ChBx Sleight' : pdfrw.PdfName(boolProfs[1][1]),
+   'ChBx Stealth' : pdfrw.PdfName(boolProfs[1][2]),
+   'ChBx Arcana' : pdfrw.PdfName(boolProfs[2][0]),
+   'ChBx History' : pdfrw.PdfName(boolProfs[2][1]),
+   'ChBx Investigation' : pdfrw.PdfName(boolProfs[2][2]),
+   'ChBx Nature' : pdfrw.PdfName(boolProfs[2][3]),
+   'ChBx Religion' : pdfrw.PdfName(boolProfs[2][4]),
+   'ChBx Animal' : pdfrw.PdfName(boolProfs[3][0]),
+   'ChBx Insight' : pdfrw.PdfName(boolProfs[3][1]),
+   'ChBx Medicine' : pdfrw.PdfName(boolProfs[3][2]),
+   'ChBx Perception' : pdfrw.PdfName(boolProfs[3][3]),
+   'ChBx Survival' : pdfrw.PdfName(boolProfs[3][4]),
+   'ChBx Deception' : pdfrw.PdfName(boolProfs[4][0]),
+   'ChBx Intimidation' : pdfrw.PdfName(boolProfs[4][1]),
+   'ChBx Performance' : pdfrw.PdfName(boolProfs[4][2]),
+   'ChBx Persuasion' : pdfrw.PdfName(boolProfs[4][3]),
+   'ST Strength' :  pdfrw.PdfName(saveProf[0]),
+   'ST Dexterity' :  pdfrw.PdfName(saveProf[1]),
+   'ST Constitution' :  pdfrw.PdfName(saveProf[2]),
+   'ST Intelligence' :  pdfrw.PdfName(saveProf[3]),
+   'ST Wisdom' :  pdfrw.PdfName(saveProf[4]),
+   'ST Charisma' :  pdfrw.PdfName(saveProf[5]),
+   'PersonalityTraits ' : pers,
+   'Ideals' : ideal,
+   'Bonds' : bond,
+   'Flaws' : flaw,
+
+}
+    
+    
+    return data_dict
 
 
 
-char = makeCharacter(5)
+char = makeCharacter(15)
 
 def makeParty(n,*args):
     for i in range(n):
@@ -329,7 +404,7 @@ def makeParty(n,*args):
 
 
 Sheet_Path = 'C:/Users/2stic/Desktop/charactergen/Character Sheet.pdf'
-OUTPUT_PATH = 'C:/Users/2stic/Desktop/charactergen/Out Character Sheet.pdf'
+OUTPUT_PATH = 'C:/Users/2stic/Desktop/charactergen/{} {} {}.pdf'.format(char['Gender'],char['Race'],char['ClassLevel'])
 
 
 ANNOT_KEY = '/Annots'
@@ -354,85 +429,7 @@ def write_fillable_pdf(input_pdf_path, output_pdf_path, data_dict):
                     )
     pdfrw.PdfWriter().write(output_pdf_path, template_pdf)
 
-data_dict = {
-   'Gender': char[0][0],
-   'Race' : char[0][1],
-   'ClassLevel' : char[0][2] + ' ' + char[0][3] + ' ' + str(char[0][9]),
-   'Background' : char[0][4],
-   'ProfB' : '+ ' + str(char[0][10]),
-   'HPMax' : str(char[0][11]),
-   'HPCurrent' : str(char[0][11]),
-   'STR' : str(char[0][5][0]),
-   'STRmod' : int(statBonus(char[0][5][0])),
-   'DEX' : str(char[0][5][1]),
-   'DEXmod' : int(statBonus(char[0][5][1])),
-   'CON' : str(char[0][5][2]),
-   'CONmod' : int(statBonus(char[0][5][2])),
-   'INT' : str(char[0][5][3]),
-   'INTmod' : int(statBonus(char[0][5][3])),
-   'WIS' : str(char[0][5][4]),
-   'WISmod' : int(statBonus(char[0][5][4])),
-   'CHA' : str(char[0][5][5]),
-   'CHAmod' : int(statBonus(char[0][5][5])),
-   'Alignment' : char[0][8],
-   'SavingThrows' : int(char[1][1][0]),
-   'SavingThrows2' : int(char[1][1][1]),
-   'SavingThrows3' : int(char[1][1][2]),
-   'SavingThrows4' : int(char[1][1][3]),
-   'SavingThrows5' : int(char[1][1][4]),
-   'SavingThrows6' : int(char[1][1][5]),
-   'Athletics' : int(char[1][0][0][0]),
-   'Acrobatics' : int(char[1][0][1][0]),
-   'SleightofHand' : int(char[1][0][1][1]),
-   'Stealth' : int(char[1][0][1][2]),
-   'Arcana' : int(char[1][0][2][0]),
-   'History' : int(char[1][0][2][1]),
-   'Investigation' : int(char[1][0][2][2]),
-   'Nature' : int(char[1][0][2][3]),
-   'Religion' : int(char[1][0][2][4]),
-   'Animal Handling' : int(char[1][0][3][0]),
-   'Insight' : int(char[1][0][3][1]),
-   'Medicine' : int(char[1][0][3][2]),
-   'Perception' : int(char[1][0][3][3]),
-   'Survival' : int(char[1][0][3][4]),
-   'Deception' : int(char[1][0][4][0]),
-   'Intimidation' : int(char[1][0][4][1]),
-   'Performance' : int(char[1][0][4][2]),
-   'Persuasion' : int(char[1][0][4][3]),
-   'Passive' : str(10 + char[1][0][3][3]),
-   'Equipment' : str(char[2]),
-   'HD' : 'd' + str(char[0][-1]),
-   'HDTotal' : str(char[0][9]) + 'd' + str(char[0][-1]),
-   'ChBx Acrobatics' : pdfrw.PdfName(char[1][2][1][0]),
-   'ChBx Athletics' : pdfrw.PdfName(char[1][2][0][0]),
-   'ChBx Sleight' : pdfrw.PdfName(char[1][2][1][1]),
-   'ChBx Stealth' : pdfrw.PdfName(char[1][2][1][2]),
-   'ChBx Arcana' : pdfrw.PdfName(char[1][2][2][0]),
-   'ChBx History' : pdfrw.PdfName(char[1][2][2][1]),
-   'ChBx Investigation' : pdfrw.PdfName(char[1][2][2][2]),
-   'ChBx Nature' : pdfrw.PdfName(char[1][2][2][3]),
-   'ChBx Religion' : pdfrw.PdfName(char[1][2][2][4]),
-   'ChBx Animal' : pdfrw.PdfName(char[1][2][3][0]),
-   'ChBx Insight' : pdfrw.PdfName(char[1][2][3][1]),
-   'ChBx Medicine' : pdfrw.PdfName(char[1][2][3][2]),
-   'ChBx Perception' : pdfrw.PdfName(char[1][2][3][3]),
-   'ChBx Survival' : pdfrw.PdfName(char[1][2][3][4]),
-   'ChBx Deception' : pdfrw.PdfName(char[1][2][4][0]),
-   'ChBx Intimidation' : pdfrw.PdfName(char[1][2][4][1]),
-   'ChBx Performance' : pdfrw.PdfName(char[1][2][4][2]),
-   'ChBx Persuasion' : pdfrw.PdfName(char[1][2][4][3]),
-   'ST Strength' :  pdfrw.PdfName(char[1][3][0]),
-   'ST Dexterity' :  pdfrw.PdfName(char[1][3][1]),
-   'ST Constitution' :  pdfrw.PdfName(char[1][3][2]),
-   'ST Intelligence' :  pdfrw.PdfName(char[1][3][3]),
-   'ST Wisdom' :  pdfrw.PdfName(char[1][3][4]),
-   'ST Charisma' :  pdfrw.PdfName(char[1][3][5]),
-   'PersonalityTraits ' : char[3][0],
-   'Ideals' : char[3][1],
-   'Bonds' : char[3][2],
-   'Flaws' : char[3][3],
 
-}
 def addPlus(data_dict):
     for i in data_dict:
         if type(data_dict[i]) == int:
@@ -443,4 +440,4 @@ def addPlus(data_dict):
     return data_dict
 
 
-write_fillable_pdf(Sheet_Path, OUTPUT_PATH, addPlus(data_dict))
+write_fillable_pdf(Sheet_Path, OUTPUT_PATH, addPlus(char))
