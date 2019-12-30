@@ -17,6 +17,8 @@ bgbonds = read_csv('https://raw.githubusercontent.com/2stickmen/charactergen/mas
 bgideals = read_csv('https://raw.githubusercontent.com/2stickmen/charactergen/master/BGIdeals.csv')
 bgpers = read_csv('https://raw.githubusercontent.com/2stickmen/charactergen/master/BGPersonality.csv')
 
+cwd = os.getcwd().replace('\\','/')
+
 vowels = ['A','E','I','O','U']
 gender = ['Male', 'Female', 'Non-Binary']
 alignments = ['Lawful Good', 'Neutral Good', 'Chaotic Good',
@@ -400,8 +402,8 @@ char = makeCharacter(15)
 
 
 
-Sheet_Path = 'C:/Users/2stic/Desktop/charactergen/Character Sheet.pdf'
-OUTPUT_PATH = 'C:/Users/2stic/Desktop/charactergen/{} {} {}.pdf'.format(char['Gender'],char['Race'],char['ClassLevel'])
+Sheet_Path = cwd + '/Character Sheet.pdf'
+OUTPUT_PATH = cwd + '/{} {} {}.pdf'.format(char['Gender'],char['Race'],char['ClassLevel'])
 
 
 ANNOT_KEY = '/Annots'
@@ -442,5 +444,5 @@ write_fillable_pdf(Sheet_Path, OUTPUT_PATH, addPlus(char))
 def makeParty(n,level,*args):
     for i in range(n):
         chars = makeCharacter(level,*args)
-        write_fillable_pdf(Sheet_Path, 'C:/Users/2stic/Desktop/charactergen/{} {} {}.pdf'.format(chars['Gender'],chars['Race'],chars['ClassLevel']), addPlus(chars))
+        write_fillable_pdf(Sheet_Path, cwd + '/{} {} {}.pdf'.format(chars['Gender'],chars['Race'],chars['ClassLevel']), addPlus(chars))
 
