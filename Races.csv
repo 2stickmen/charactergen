@@ -38,12 +38,12 @@ Half-Elf (Mark of Detection),58,2,10,0,0,0,0,2,0,1,2
 Half-Elf (Mark of Storm),58,2,10,0,1,0,0,0,2,0,2
 Half-Elf (Moon Elf or Sun Elf Descent),58,2,10,0,0,0,0,0,2,2,2
 Half-Elf (Wood Elf Descent),58,2,10,0,0,0,0,0,2,2,2
-Halfling (Ghostwise),38,2,4,0,2,0,0,1,0,0,1
+Halfling (Ghostwise),38,2,4,0,2,0,0,1,0,0,0
 Halfling (Lightfoot),38,2,4,0,2,0,0,0,1,0,0
 Halfling (Mark of Healing),38,2,4,0,2,0,0,1,0,0,0
 Halfling (Mark of Hospitality),38,2,4,0,2,0,0,0,1,0,0
 Halfling (Stout),38,2,4,0,2,1,0,0,0,0,0
-Half-Orc,60,2,10,2,0,1,0,0,0,0,0
+Half-Orc,60,2,10,2,0,1,0,0,0,0,1
 Half-Orc (Mark of Finding),60,2,10,0,0,1,0,2,0,0,0
 Hobgoblin,60,1,12,0,0,2,1,0,0,0,0
 Human (Mark of Finding),58,2,10,0,0,1,0,2,0,0,0
