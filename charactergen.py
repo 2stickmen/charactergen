@@ -3,6 +3,7 @@ import pdfrw
 from random import *
 from pandas import *
 from math import ceil
+import numpy
 
 races = read_csv('https://raw.githubusercontent.com/2stickmen/charactergen/master/Races.csv')
 classes = read_csv('https://raw.githubusercontent.com/2stickmen/charactergen/master/Classes.csv')
@@ -16,6 +17,11 @@ bgflaws = read_csv('https://raw.githubusercontent.com/2stickmen/charactergen/mas
 bgbonds = read_csv('https://raw.githubusercontent.com/2stickmen/charactergen/master/BGBonds.csv')
 bgideals = read_csv('https://raw.githubusercontent.com/2stickmen/charactergen/master/BGIdeals.csv')
 bgpers = read_csv('https://raw.githubusercontent.com/2stickmen/charactergen/master/BGPersonality.csv')
+feats = read_csv('https://raw.githubusercontent.com/2stickmen/charactergen/master/Feats.csv')
+featreqs = read_csv('https://raw.githubusercontent.com/2stickmen/charactergen/master/FeatsReqs.csv')
+featplus = read_csv('https://raw.githubusercontent.com/2stickmen/charactergen/master/FeatsPlusses.csv')
+
+
 
 cwd = os.getcwd().replace('\\','/')
 
@@ -29,6 +35,8 @@ dexSkills = ['Acrobatics', 'Sleight of Hand','Stealth']
 intSkills = ['Arcana', 'History', 'Investigation', 'Nature', 'Religion']
 wisSkills = ['Animal Handling', 'Insight', 'Medicine', 'Perception','Survival']
 chaSkills = ['Deception', 'Intimidation', 'Performance', 'Persuasion']
+
+
 
 def dN(N): #roll an n sided dice
     dN = randint(1,N)
@@ -173,16 +181,19 @@ def statBonus(stat):
     bonus = (stat-10)//2
     return bonus
 
-def getHealth(CON, clas, level):
+def getHealth(CON, clas, level,feats):
     classInfo = classes.loc[classes['Class:']==clas]
     con = statBonus(CON)
     hd = classInfo.iloc[0,3]
     baseHP = hd
     rolledHP = AdN(level-1,hd)
+    tough = 0
+    if 'Tough' in feats:
+        tough = 2
     conHP = con * (level-1)
     if con < 0:
-        return baseHP + rolledHP
-    return baseHP + rolledHP + conHP
+        return baseHP + rolledHP + tough*level
+    return baseHP + rolledHP + conHP + tough*level
 
 def getRaceProfs(race):
     raceInfo = races.loc[races['racename'] == race]
@@ -258,6 +269,125 @@ def getSaves(level,stats,clas):
          out[i] += pb
      return out
          
+ 
+    
+def getFeats(featsIn, stats):
+    added = 0
+    while added <1:
+        r = randint(0,feats.shape[0]-1)
+        feat = feats.iloc[r,0]
+        priors = []
+        
+        if feats.iloc[r,3] != 0:
+            if feats.iloc[r,3] == 1:    
+                if stats[int(featreqs.loc[0,feat])] < 13:
+                    priors.append(r)
+            elif feats.iloc[r,3] == 2:  
+               prereq = [int(featreqs.loc[i,feat]) for i in range(2)]
+               if stats[prereq[0]] <13 and stats[prereq[1]] < 13:
+                   priors.append(r)
+        if feat not in featsIn and r not in priors:
+            return feat
+            added +=1
+        if r in priors:
+            r = randint(0,feats.shape[0]-1)      
+
+def getFeatDesc(featlist,stats,clas):
+    classInfo = classes.loc[classes['Class:']==clas]
+    classPrio = classInfo.iloc[0,1]
+    prio = [int(classPrio[2*n+1]) for n in range(0,6)]
+    effects = []
+    saves = []
+    for feat in featlist:
+        featInfo = feats.loc[feats['Feat Name'] == feat]       
+        if featInfo.iloc[0,1] != 0:
+            if stats[prio[0]] % 2 == 1:
+                for i in range(featInfo.iloc[0,1]):
+                    if featplus.loc[i,feat] == stats.index(max(stats)):
+                        stats[stats.index(max(stats))] += 1
+            else:
+                plus = int(featplus.loc[randint(0,int(featInfo.iloc[0,1])-1),feat])
+                stats[plus] += 1
+                if feat == 'Resilient':
+                    saves.append(plus)
+        effects.append(featInfo.iloc[0,2])
+    return statCheck(stats), saves, effects
+
+def getASI(level,clas,stats, nstats):
+    classInfo = classes.loc[classes['Class:']==clas]
+    classPrio = classInfo.iloc[0,1]
+    prio = [int(classPrio[2*n+1]) for n in range(0,6)]
+    asi = [4*i-1 for i in range (1,5)] + [18]
+    if clas == 'Fighter':
+        asi += [5,13]
+    asi = asi + [level]
+    asi.sort()
+    feats = []
+    for i in range(asi.index(level)):
+        if nstats[prio[0]] < 20:
+            stat_alloc = 2
+            while stat_alloc > 0:
+                if nstats[prio[0]] % 2 == 1:
+                    poss = []
+                    for i in range(featplus.shape[0]):
+                        for j in range(featplus.shape[1]):
+                            try:
+                                int(featplus.iloc[i,j])
+                            except:
+                                a = 1
+                            else: 
+                                if int(featplus.iloc[i,j]) == prio[0]:
+                                    if featplus.columns[j] not in feats:
+                                        poss.append(featplus.columns[j])
+                    if len(poss) != 0:
+                        feats.append(poss[randint(0,len(poss))-1])
+                        stat_alloc -= 2
+                        nstats[prio[0]] += 1
+                    else:
+                        nstats[prio[0]] += 1
+                        stats[prio[0]] += 1
+                        stat_alloc-=1
+                        checkOdd = [0,0,0,0,0,0]
+                        for i in range(len(stats)):
+                            if nstats[i] % 2 == 1:
+                                checkOdd[i] = nstats[i]
+                                if checkOdd != [0,0,0,0,0,0]:
+                                    stats[checkOdd.index(max(checkOdd))] +=1
+                                    nstats[checkOdd.index(max(checkOdd))] +=1
+                                    stat_alloc-=1
+                                else:
+                                    if nstats[prio[0]] != 20:
+                                        nstats[prio[0]] += 1
+                                        stats[prio[0]] += 1
+                                    else:
+                                        secStat = nstats
+                                        secStat[prio[0]] = 0
+                                        nstats[nstats.index(max(secStat))]+=1
+                                        stats[nstats.index(max(secStat))]+=1
+                                        stat_alloc-=1
+                elif max(nstats) % 2 == 0:
+                    nstats[prio[0]]+=2
+                    stats[prio[0]]+=2
+                    stat_alloc-=2
+        else:
+            feats.append(getFeats(feats,nstats))      
+    return feats, stats
+
+def getInit(clas,sub,level,feats,stats):
+    init = statBonus(stats[1])
+    if sub == 'Swashbuckler':
+        t += statBonus(stats[5])
+    elif sub == 'Gloom Stalker':
+        init += statBonus(stats[4])
+    elif sub == 'War Magic':
+        init += statBonus(stats[3])
+    if clas == 'Bard' and level >= 2:
+        init += getPBonus(level)//2	
+    if 'Alert' in feats:
+        init += 5	
+    return init
+
+
 
 def makeCharacter(level, *args): # Input a list: [Amount of common items, Amount of uncommon items...]
     race = getRace()
@@ -271,12 +401,21 @@ def makeCharacter(level, *args): # Input a list: [Amount of common items, Amount
     inch = height[1]
     preStats = statOptimise(statGen(),clas)
     adjStats = statAdj(race,clas)
-    stats = statCheck([m + n for m,n in zip(preStats,adjStats)])
+    asistats = statCheck([m + n for m,n in zip(preStats,adjStats)])
+    asi = getASI(level,clas,asistats,asistats)
+    if race == 'Human (Variant)':
+        asi[1].append(getFeats(asi[1],stats))
+    deets = getFeatDesc(asi[0],asi[1],clas)
+    stats = deets[0]
+    feats = asi[0]
+    for i in range(len(feats)):
+        feats.insert(2*i+1,deets[2][i].replace('\\r','\r')) 
+    init = getInit(clas,sub,level,feats,stats)
     gend = choices(gender,[0.45,0.45,0.1])[0]
     alignment = choices(alignments,[5/36,5/36,5/36,5/36,5/36,5/36,2/36,2/36,2/36])[0]
     bg = getBG()
     pb = getPBonus(level)
-    hp = getHealth(stats[2], clas, level)
+    hp = getHealth(stats[2], clas, level, feats)
     hd = classInfo.iloc[0,3]
     getProf = getProfs(level,stats,clas,race,bg)
     profs = getProf[0]
@@ -300,7 +439,7 @@ def makeCharacter(level, *args): # Input a list: [Amount of common items, Amount
     boolProfs = [strProfs,dexProfs,intProfs,wisProfs,chaProfs]
     saves = getSaves(level, stats, clas)
     saveProf = ['No','No','No','No','No','No']
-    savingThrows = [classInfo.iloc[0,4],classInfo.iloc[0,5]]
+    savingThrows = [classInfo.iloc[0,4],classInfo.iloc[0,5]] + deets[1]
     for i in savingThrows:
         saveProf[i] = 'Yes'
     inv = []
@@ -317,7 +456,7 @@ def makeCharacter(level, *args): # Input a list: [Amount of common items, Amount
    'Race' : race,
    'ClassLevel' : sub + ' ' + clas + ' ' + str(level),
    'Background' : bg,
-   'Height' : str(ft) + '′' + str(inch) + '″',
+   'Height' : str(ft) + '\'' + str(inch) + '"',
    'ProfB' : '+ ' + str(pb),
    'HPMax' : str(hp),
    'HPCurrent' : str(hp),
@@ -390,6 +529,9 @@ def makeCharacter(level, *args): # Input a list: [Amount of common items, Amount
    'Ideals' : ideal,
    'Bonds' : bond,
    'Flaws' : flaw,
+   'Initiative' : int(init),
+   'Features and Traits' : str(feats)[1:-1],
+   'Help' : deets[1],
 
 }
     
